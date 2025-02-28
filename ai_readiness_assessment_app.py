@@ -1,161 +1,992 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
+import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.patches as patches
 import seaborn as sns
+import io
 import os
-import json
 import re
-import importlib.util
-import sys
+import json
 from PIL import Image
-from io import BytesIO
+from helper_functions import get_color_for_score, get_strength_comment, get_improvement_comment, get_recommendations
+from visualization_functions import create_radar_chart, create_gauge_chart, create_bar_chart
+import matplotlib.colors as mcolors
+from matplotlib.figure import Figure
+import matplotlib.patches as mpatches
 import base64
+from io import BytesIO
+from matplotlib.colors import LinearSegmentedColormap
 
 # Set page configuration
 st.set_page_config(
-    page_title="AI Readiness Assessment",
-    page_icon="🤖",
+    page_title="Enterprise AI Readiness Assessment",
+    page_icon="🔍",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Set custom color theme
-theme_colors = {
-    "primary": "#3949AB",    # Deep blue
-    "secondary": "#00ACC1",  # Cyan
-    "background": "#FAFAFA", # Light grey
-    "success": "#4CAF50",    # Green
-    "warning": "#FF9800",    # Orange
-    "error": "#F44336",      # Red
-    "text": "#212121",       # Dark grey
-    "accent1": "#7E57C2",    # Purple
-    "accent2": "#26A69A",    # Teal
+# Custom CSS to style buttons
+st.markdown("""
+<style>
+/* General button styling */
+button, .stButton>button, div.stButton>button, .stButton>button:focus, .stButton>button:active {
+    background-color: #0284C7 !important;
+    color: #FFFFFF !important;
+    border: none !important;
 }
 
-# Custom CSS to make the app more premium
-st.markdown(f"""
+/* Make sure hover states maintain styling */
+.stButton>button:hover {
+    background-color: #0369a1 !important;
+    color: #FFFFFF !important;
+}
+
+/* Target primary buttons specifically */
+button[kind="primary"], 
+div[data-testid="stButton"] button {
+    background-color: #0284C7 !important;
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+}
+
+/* Target "Start Assessment" and "Generate PDF Report" buttons specifically */
+.element-container:has(button:contains("Start Assessment")) button, 
+.element-container:has(button:contains("Generate PDF Report")) button {
+    background-color: #0284C7 !important; 
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Define color theme for the app - enterprise palette
+theme_colors = {
+    'primary': '#1E293B',     # Slate 800
+    'secondary': '#475569',   # Slate 600
+    'accent': '#0284C7',      # Sky 600
+    'success': '#059669',     # Emerald 600
+    'warning': '#D97706',     # Amber 600
+    'error': '#EF4444',       # Red 600
+    'background': '#F8FAFC',  # Slate 50
+    'card': '#FFFFFF',        # White
+    'text': '#334155',        # Slate 700
+    'muted': '#94A3B8',       # Slate 400
+    'border': '#E2E8F0',      # Slate 200
+    'highlight': '#EFF6FF',   # Blue 50
+}
+
+# Add custom CSS for enterprise-level design
+st.markdown("""
 <style>
-    /* Main container */
-    .main .block-container {{
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-        max-width: 1200px;
-    }}
-
-    /* Headers */
-    h1, h2, h3 {{
-        color: {theme_colors["primary"]};
-        font-family: 'Segoe UI', Arial, sans-serif;
-    }}
+    /* Google Fonts - Inter */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    h1 {{
+    /* Base styles */
+    .stApp {
+        background-color: #F8FAFC;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Global typography */
+    html, body, p, div, h1, h2, h3, h4, h5, h6, li, span {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1E293B;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
         font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid {theme_colors["secondary"]};
-    }}
-    
-    h2 {{
-        font-weight: 500;
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-    }}
-    
-    h3 {{
-        font-weight: 400;
+        color: #1E293B;
+        letter-spacing: -0.01em;
         margin-top: 1rem;
-        margin-bottom: 0.75rem;
-    }}
-
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {{
-        gap: 8px;
-    }}
+        margin-bottom: 0.5rem;
+    }
     
-    .stTabs [data-baseweb="tab"] {{
-        height: 50px;
-        white-space: pre-wrap;
-        border-radius: 6px 6px 0px 0px;
-        padding: 0px 20px;
-        background-color: #F5F5F5;
-        font-weight: 500;
-    }}
-
-    .stTabs [aria-selected="true"] {{
-        background-color: {theme_colors["primary"]};
-        color: white;
-        font-weight: 500;
-    }}
-    
-    /* Expanders */
-    .streamlit-expanderHeader {{
-        font-weight: 500;
-        color: {theme_colors["text"]};
-        background-color: #F0F0F0;
-        border-radius: 4px;
-    }}
-    
-    /* Metrics */
-    [data-testid="stMetricValue"] {{
-        font-size: 2.5rem;
+    h3 {
+        font-size: 1.25rem;
         font-weight: 600;
-        color: {theme_colors["primary"]};
-    }}
+        color: #1E293B;
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
     
-    [data-testid="stMetricDelta"] {{
-        font-size: 1rem;
-        color: {theme_colors["success"]};
-    }}
-
-    /* Cards for sections */
-    .card {{
-        padding: 1.5rem;
-        border-radius: 8px;
+    h4 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1E293B;
+        margin-top: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    p, li {
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        color: #334155;
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Container refinements */
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        max-width: 1200px;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
         background-color: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-right: 1px solid #E2E8F0;
+    }
+    
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] a, [data-testid="stSidebar"] label {
+        color: #1E293B !important;
+    }
+    
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        color: #1E293B !important;
+        font-weight: 600;
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stImage"] {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Button styling */
+    .stButton button {
+        border-radius: 0.375rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+        background-color: #1E293B !important;
+        color: white !important;
+        border: none !important;
+    }
+    
+    .stButton button:focus {
+        box-shadow: none;
+    }
+    
+    .stButton button:hover {
+        opacity: 0.9;
+        background-color: #334155 !important;
+    }
+    
+    /* Make text white on red buttons */
+    .stButton button[style*="background-color: #EF4444"], 
+    .stButton button[style*="background-color: rgb(239, 68, 68)"] {
+        color: white !important;
+    }
+    
+    /* Dashboard metrics */
+    .metric-card {
+        padding: 1rem;
+        border-radius: 0.375rem;
+        text-align: center;
+        background: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #E2E8F0;
         margin-bottom: 1rem;
-    }}
+    }
     
-    /* Buttons */
-    .stButton button {{
+    .metric-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #0284C7;
+        margin: 0.5rem 0;
+    }
+    
+    .metric-label {
+        font-size: 0.875rem;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
         font-weight: 500;
-        border-radius: 6px;
-        height: 3rem;
-        padding: 0 1.5rem;
-        background-color: {theme_colors["primary"]};
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #1E293B;
+        background-color: #F8FAFC;
+        border-radius: 0.25rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #E2E8F0;
+    }
+    
+    .streamlit-expanderContent {
+        border: 1px solid #E2E8F0;
+        border-top: none;
+        padding: 1rem;
+        border-radius: 0 0 0.25rem 0.25rem;
+    }
+    
+    /* Radio button & checkbox styling */
+    .stRadio > div {
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stRadio label {
+        font-size: 0.875rem;
+        padding: 0.25rem 0;
+        color: #334155;
+    }
+    
+    /* Input widgets */
+    .stSelectbox > div > div, .stNumberInput > div > div {
+        padding: 0.25rem 0;
+    }
+    
+    /* Tabs styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0.125rem;
+        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 0;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 0.25rem 0.25rem 0 0;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        background-color: transparent;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: white;
+        font-weight: 600;
+        color: #0284C7;
+        border-bottom: 2px solid #0284C7;
+    }
+    
+    /* Dataframe styling */
+    .dataframe {
+        border: none;
+        font-size: 0.875rem;
+    }
+    
+    .dataframe th {
+        font-weight: 600;
+        border-bottom: 1px solid #E2E8F0;
+        background-color: #F8FAFC;
+    }
+    
+    .dataframe td {
+        border-bottom: 1px solid #E2E8F0;
+    }
+    
+    /* Alert/info boxes */
+    .stAlert {
+        padding: 0.75rem 1rem;
+        border-radius: 0.25rem;
+        border-left: 3px solid;
+    }
+    
+    .stAlert[data-baseweb="notification"] {
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .stAlert div[data-testid="stImage"] {
+        margin-right: 0.75rem;
+    }
+    
+    /* Fix for checkbox alignment */
+    .stCheckbox > div {
+        align-items: center;
+    }
+    
+    /* Remove padding from st.columns */
+    div[data-testid="column"] {
+        padding: 0 0.5rem;
+    }
+    
+    /* Footer refinement */
+    footer {
+        display: none;
+    }
+    
+    /* Custom question card */
+    .question-card {
+        background-color: white;
+        border-radius: 0.375rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: relative;
+        border-left: 4px solid #0284C7;
+    }
+    
+    .question-card h3 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        color: #1E293B;
+    }
+    
+    .question-card p {
+        margin-bottom: 1.25rem;
+        color: #1E293B;
+    }
+    
+    .question-number {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background-color: #0284C7;
         color: white;
-        transition: all 0.3s;
-    }}
+        width: 2rem;
+        height: 2rem;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
     
-    .stButton button:hover {{
-        background-color: {theme_colors["secondary"]};
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }}
-    
-    /* Select slider */
-    [data-testid="stSlider"] .thumb-content p {{
+    /* Option styling */
+    .option-label {
+        font-size: 0.875rem;
         font-weight: 500;
-    }}
+        color: #334155;
+        padding: 0.25rem 0;
+    }
+    
+    /* Progress indicator */
+    .progress-container {
+        margin: 1rem 0;
+    }
+    
+    .progress-bar {
+        height: 0.5rem;
+        background-color: #E2E8F0;
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #0284C7 0%, #38BDF8 100%);
+        border-radius: 1rem;
+    }
+    
+    /* Section divider */
+    .divider {
+        margin: 2rem 0;
+        border: none;
+        height: 1px;
+        background-color: #E2E8F0;
+    }
+    
+    /* Data visualization container */
+    .viz-container {
+        background-color: white;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #E2E8F0;
+    }
+    
+    .viz-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1E293B;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #E2E8F0;
+    }
+    
+    /* Executive dashboard styling */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1E293B;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 0.875rem;
+        color: #64748B;
+    }
+    
+    /* KPI indicators */
+    .kpi-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .kpi-card {
+        flex: 1;
+        min-width: 150px;
+        background: white;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #E2E8F0;
+    }
+    
+    .kpi-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0284C7;
+        margin: 0.25rem 0;
+    }
+    
+    .kpi-label {
+        font-size: 0.75rem;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 500;
+    }
+    
+    /* Category header */
+    .category-header {
+        margin-bottom: 1rem;
+    }
+    
+    /* Subcategory header */
+    .subcategory-header {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Question number */
+    .question-number {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748B;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Question divider */
+    .question-divider {
+        margin: 1rem 0;
+        opacity: 0.2;
+    }
+    
+    /* Submit container */
+    .submit-container {
+        text-align: center;
+        margin-top: 2rem;
+    }
+    
+    .submit-message {
+        font-size: 0.875rem;
+        color: #64748B;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Feature cards */
+    .feature-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.375rem;
+        background-color: #0284C7;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1E293B;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-description {
+        font-size: 0.875rem;
+        color: #64748B;
+        line-height: 1.5;
+    }
+    
+    /* Card styling - enterprise level */
+    .card {
+        background-color: white;
+        border-radius: 0.375rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+        border: 1px solid #E2E8F0;
+        transition: all 200ms ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+    }
+    
+    .card h1, .card h2, .card h3, .card h4 {
+        color: #1E293B;
+        margin-top: 0;
+    }
+    
+    .card p {
+        color: #1E293B;
+        margin-bottom: 0;
+    }
+    
+    .card.primary {
+        background-color: #0284C7;
+        border: none;
+    }
+    
+    .card.primary h1, .card.primary h2, .card.primary h3, .card.primary h4, .card.primary p {
+        color: white;
+    }
+    
+    .card.success {
+        background-color: #10B981;
+        border: none;
+    }
+    
+    .card.success h1, .card.success h2, .card.success h3, .card.success h4, .card.success p {
+        color: white;
+    }
+    
+    .card.warning {
+        background-color: #F59E0B;
+        border: none;
+    }
+    
+    .card.warning h1, .card.warning h2, .card.warning h3, .card.warning h4, .card.warning p {
+        color: #1E293B;
+    }
+    
+    .card.error {
+        background-color: #EF4444;
+        border: none;
+    }
+    
+    .card.error h1, .card.error h2, .card.error h3, .card.error h4, .card.error p {
+        color: white;
+    }
+    
+    .card.info {
+        background-color: #0284C7;
+        border: none;
+    }
+    
+    .card.info h1, .card.info h2, .card.info h3, .card.info h4, .card.info p {
+        color: white;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Add custom CSS for enhanced styling
+st.markdown("""
+<style>
+    /* Google Fonts - Inter */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    /* Color palette */
+    :root {
+        --primary: #0284C7;
+        --primary-light: #EFF6FF;
+        --secondary: #475569;
+        --accent: #10B981;
+        --background: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --text-primary: #1E293B;
+        --text-secondary: #64748B;
+        --border: #E2E8F0;
+        --success: #10B981;
+        --warning: #F59E0B;
+        --error: #EF4444;
+        --button-bg: #EF4444;
+        --button-text: #FFFFFF;
+    }
+    
+    /* Global styles */
+    .stApp {
+        background-color: var(--background);
+    }
+    .stButton > button p { color: white !important; }
+.stButton > button * { color: white !important; }
+button p { color: white !important; }
+        
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    h1 {
+        font-size: 1.875rem;
+        letter-spacing: -0.025em;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        letter-spacing: -0.025em;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    p {
+        color: var(--text-secondary);
+        line-height: 1.5;
+        font-size: 0.875rem;
+    }
+    
+    /* Dashboard header */
+    .dashboard-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+    
+    /* Cards */
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
+        transition: all 200ms ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .card h1, .card h2, .card h3, .card h4 {
+        color: var(--text-primary);
+        margin-top: 0;
+    }
+    
+    .card p {
+        color: var(--text-primary);
+        margin-bottom: 0;
+    }
+    
+    .card.primary {
+        border-left: 4px solid var(--primary);
+    }
+    
+    .card.success {
+        border-left: 4px solid var(--success);
+    }
+    
+    .card.warning {
+        border-left: 4px solid var(--warning);
+    }
+    
+    .card.error {
+        border-left: 4px solid var(--error);
+    }
+    
+    .card.info {
+        background-color: var(--primary-light);
+        border: none;
+    }
     
     /* Sidebar */
-    [data-testid="stSidebar"] {{
-        background-color: {theme_colors["primary"]};
-        padding-top: 2rem;
-    }}
-    
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {{
+    .css-1cypcdb, .css-1rs6os {
+        background: linear-gradient(180deg, #0C4A6E 0%, #0284C7 100%);
         color: white;
-    }}
+    }
     
-    [data-testid="stSidebar"] .stRadio label {{
-        color: white;
+    /* Question card */
+    .question-card {
+        background-color: var(--card-bg);
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border);
+    }
+    
+    .question-text {
+        font-size: 0.9375rem;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
         font-weight: 500;
-    }}
+    }
+    
+    .question-title {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.375rem;
+        letter-spacing: 0.05em;
+        font-weight: 500;
+    }
+    
+    /* Category header */
+    .category-header {
+        margin-bottom: 1rem;
+    }
+    
+    /* Subcategory header */
+    .subcategory-header {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Question number */
+    .question-number {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748B;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Question divider */
+    .question-divider {
+        margin: 1rem 0;
+        opacity: 0.2;
+    }
+    
+    /* Submit container */
+    .submit-container {
+        text-align: center;
+        margin-top: 2rem;
+    }
+    
+    .submit-message {
+        font-size: 0.875rem;
+        color: #64748B;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Progress bar */
+    .progress-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+    }
+    
+    .progress-header span {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    
+    .progress-percentage {
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+    }
+    
+    .progress-bar {
+        height: 0.5rem;
+        background-color: #E2E8F0;
+        border-radius: 9999px;
+        overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+        height: 100%;
+        background-color: var(--primary);
+        border-radius: 9999px;
+        transition: width 0.3s ease;
+    }
+    
+    /* Option label */
+    .option-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    /* Custom radio buttons */
+    .stRadio > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .stRadio label {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.375rem;
+        transition: all 0.15s ease;
+        background-color: white;
+    }
+    
+    .stRadio label:hover {
+        background-color: var(--primary-light);
+        border-color: var(--primary);
+    }
+    
+    .stRadio [data-baseweb="radio"] {
+        margin-right: 0.5rem;
+    }
+    
+    /* Selected radio button */
+    .stRadio [aria-checked="true"] {
+        background-color: var(--primary-light);
+        border-color: var(--primary);
+        font-weight: 500;
+    }
+    
+    /* Feature cards */
+    .feature-card {
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
+        transition: all 0.2s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.375rem;
+        background-color: var(--primary-light);
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+    
+    .feature-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-description {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+    
+    /* Card styling - enterprise level */
+    .card {
+        background-color: white;
+        border-radius: 0.375rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+        border: 1px solid #E2E8F0;
+        transition: all 200ms ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+    }
+    
+    .card h1, .card h2, .card h3, .card h4 {
+        color: #1E293B;
+        margin-top: 0;
+    }
+    
+    .card p {
+        color: #1E293B;
+        margin-bottom: 0;
+    }
+    
+    .card.primary {
+        background-color: #0284C7;
+        border: none;
+    }
+    
+    .card.primary h1, .card.primary h2, .card.primary h3, .card.primary h4, .card.primary p {
+        color: white;
+    }
+    
+    .card.success {
+        background-color: #10B981;
+        border: none;
+    }
+    
+    .card.success h1, .card.success h2, .card.success h3, .card.success h4, .card.success p {
+        color: white;
+    }
+    
+    .card.warning {
+        background-color: #F59E0B;
+        border: none;
+    }
+    
+    .card.warning h1, .card.warning h2, .card.warning h3, .card.warning h4, .card.warning p {
+        color: #1E293B;
+    }
+    
+    .card.error {
+        background-color: #EF4444;
+        border: none;
+    }
+    
+    .card.error h1, .card.error h2, .card.error h3, .card.error h4, .card.error p {
+        color: white;
+    }
+    
+    .card.info {
+        background-color: #0284C7;
+        border: none;
+    }
+    
+    .card.info h1, .card.info h2, .card.info h3, .card.info h4, .card.info p {
+        color: white;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -405,7 +1236,7 @@ def create_gauge_chart(score, title):
     
     # Create the gauge background
     theta = np.linspace(3*np.pi/4, 9*np.pi/4, 100)
-    radius = 0.75
+    radius = 1.0
     
     # Draw the gauge outline
     x = radius * np.cos(theta)
@@ -422,22 +1253,22 @@ def create_gauge_chart(score, title):
                 color=color, linewidth=3)
     
     # Draw segment labels
-    labels = ['Low', 'Medium', 'High', 'Excellent']
-    positions = [3*np.pi/4 + i*6*np.pi/16 for i in range(5)]
-    
-    for i, (label, pos) in enumerate(zip(labels, positions[:-1])):
-        mid_pos = (positions[i] + positions[i+1]) / 2
-        ax.text(0.8 * np.cos(mid_pos), 0.8 * np.sin(mid_pos), label, 
-                ha='center', va='center', fontsize=10, fontweight='bold',
+    labels = ["Low", "Moderate", "High", "Excellent"]
+    positions = [15, 45, 70, 90]
+    for i, label in enumerate(labels):
+        angle = 3*np.pi/4 + (positions[i] / 100) * (6*np.pi/4)
+        ax.text(angle, radius + 0.1, label, 
+                ha='center', va='center', fontsize=10, 
+                color='#475569', fontweight='medium',
                 bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8, edgecolor=theme_colors["primary"]))
     
     # Draw tick marks
-    for value, angle in zip([0, 25, 50, 75, 100], positions):
+    for value, angle in zip([0, 25, 50, 75, 100], [3*np.pi/4, 3*np.pi/4 + (25/100) * (6*np.pi/4), 3*np.pi/4 + (50/100) * (6*np.pi/4), 3*np.pi/4 + (75/100) * (6*np.pi/4), 9*np.pi/4]):
         ax.text(0.95 * np.cos(angle), 0.95 * np.sin(angle), f"{value}%", 
                 ha='center', va='center', fontsize=9)
     
     # Draw the needle
-    needle_angle = 3*np.pi/4 + (score_100/100) * 6*np.pi/4
+    needle_angle = 3*np.pi/4 + (score_100/100) * (6*np.pi/4)
     ax.plot([0, 0.7 * np.cos(needle_angle)], [0, 0.7 * np.sin(needle_angle)], 
             color='#E53935', linewidth=4)
     
@@ -576,6 +1407,262 @@ def calculate_scores(responses):
     
     return category_scores, q_values, softmax_weights, overall_scores
 
+# Helper functions for results visualization
+
+def get_color_for_score(score):
+    """Return a color based on the score value."""
+    if score < 30:
+        return "#EF4444"  # Red for low scores
+    elif score < 60:
+        return "#F59E0B"  # Amber for medium scores
+    elif score < 80:
+        return "#10B981"  # Green for good scores
+    else:
+        return "#0284C7"  # Blue for excellent scores
+
+def create_radar_chart(categories, scores):
+    """Create a radar chart for the category scores."""
+    # Number of variables
+    N = len(categories)
+    
+    # What will be the angle of each axis in the plot
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1]  # Close the loop
+    
+    # Scores need to be in the same order and length as angles
+    scores_for_plot = scores.copy()
+    scores_for_plot += scores_for_plot[:1]  # Close the loop
+    
+    # Initialize the figure
+    fig = plt.figure(figsize=(8, 6), facecolor='white')
+    ax = fig.add_subplot(111, polar=True)
+    
+    # Draw one axis per variable and add labels
+    plt.xticks(angles[:-1], categories, color='#475569', size=10)
+    
+    # Draw the y-axis labels (0-100)
+    ax.set_rlabel_position(0)
+    plt.yticks([25, 50, 75, 100], ["25", "50", "75", "100"], color="#475569", size=8)
+    plt.ylim(0, 100)
+    
+    # Plot the scores on the radar chart
+    ax.plot(angles, scores_for_plot, linewidth=2, linestyle='solid', color='#0284C7')
+    ax.fill(angles, scores_for_plot, alpha=0.1, color='#0284C7')
+    
+    # Add a grid
+    ax.grid(True, color='#E2E8F0')
+    
+    # Set the background color
+    ax.set_facecolor('#F8FAFC')
+    
+    # Add a title
+    plt.title('AI Readiness by Dimension', size=14, color='#1E293B', pad=20)
+    
+    # Adjust the layout
+    plt.tight_layout()
+    
+    return fig
+
+def create_bar_chart(categories, scores):
+    """Create a horizontal bar chart for category scores."""
+    # Format categories for display
+    display_categories = [cat.replace('AI ', '') for cat in categories]
+    
+    # Create the bar chart
+    fig, ax = plt.figure(figsize=(10, 6)), plt.axes()
+    
+    # Plot horizontal bars
+    bars = ax.barh(display_categories, scores, color='#0284C7', alpha=0.7, height=0.5)
+    
+    # Add value labels to the right of each bar
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 2, bar.get_y() + bar.get_height()/2, f'{int(width)}%',
+                ha='left', va='center', color='#475569', fontweight='bold')
+    
+    # Customize the chart
+    ax.set_xlim(0, 100)
+    ax.set_xlabel('Score (%)', color='#475569')
+    ax.set_title('Dimension Scores', color='#1E293B', pad=20)
+    
+    # Customize the grid
+    ax.grid(axis='x', linestyle='--', alpha=0.7, color='#E2E8F0')
+    ax.set_axisbelow(True)
+    
+    # Remove the frame
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    
+    # Set background color
+    ax.set_facecolor('#F8FAFC')
+    fig.patch.set_facecolor('#F8FAFC')
+    
+    plt.tight_layout()
+    return fig
+
+def create_gauge_chart(score):
+    """Create a gauge chart for the overall score."""
+    # Define the score ranges and colors
+    ranges = [0, 30, 60, 80, 100]
+    colors = ['#EF4444', '#F59E0B', '#10B981', '#0284C7']
+    
+    # Create the figure
+    fig, ax = plt.subplots(figsize=(4, 4), subplot_kw={'projection': 'polar'})
+    
+    # Set the gauge limits (in radians)
+    start_angle = 3*np.pi/4
+    end_angle = -np.pi/4
+    
+    # Define radius for consistent use
+    radius = 1.0
+    
+    # Plot the colored ranges
+    for i in range(len(ranges)-1):
+        # Convert score range to angles in radians
+        angle1 = start_angle - (ranges[i] / 100) * (start_angle - end_angle)
+        angle2 = start_angle - (ranges[i+1] / 100) * (start_angle - end_angle)
+        
+        # Create a colored region
+        arc = patches.Wedge(
+            (0, 0), radius * 0.9, 
+            np.degrees(angle1), np.degrees(angle2),
+            width=0.2, color=colors[i], alpha=0.6
+        )
+        ax.add_patch(arc)
+    
+    # Create the pointer for the current score
+    score_angle = start_angle - (score / 100) * (start_angle - end_angle)
+    arrow_length = 0.75
+    
+    # Plot the arrow
+    ax.arrow(0, 0, arrow_length * np.cos(score_angle), arrow_length * np.sin(score_angle),
+             width=0.05, head_width=0.15, head_length=0.15, fc='#1E293B', ec='#1E293B')
+    
+    # Add a circle at the arrow base
+    circle = plt.Circle((0, 0), 0.1, fc='#1E293B', ec='#1E293B')
+    ax.add_patch(circle)
+    
+    # Add score text
+    ax.text(0, -0.2, f'{int(score)}%', ha='center', va='center', fontsize=24, fontweight='bold', color='#1E293B')
+    
+    # Add a label
+    labels = ["Low", "Moderate", "High", "Excellent"]
+    label_positions = [15, 45, 70, 90]
+    for i, label in enumerate(labels):
+        angle = start_angle - (label_positions[i] / 100) * (start_angle - end_angle)
+        ax.text(angle, radius + 0.1, label, 
+                ha='center', va='center', fontsize=8, 
+                color='#475569', fontweight='medium',
+                bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8, edgecolor=theme_colors["primary"]))
+    
+    # Draw tick marks
+    for value, angle in zip([0, 25, 50, 75, 100], [3*np.pi/4, 3*np.pi/4 + (25/100) * (6*np.pi/4), 3*np.pi/4 + (50/100) * (6*np.pi/4), 3*np.pi/4 + (75/100) * (6*np.pi/4), 9*np.pi/4]):
+        ax.text(0.95 * np.cos(angle), 0.95 * np.sin(angle), f"{value}%", 
+                ha='center', va='center', fontsize=9)
+    
+    # Remove ticks, labels, and grid
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_frame_on(False)
+    
+    # Set limits to ensure proper aspect ratio
+    ax.set_ylim(-1, 1)
+    
+    # Set background color
+    ax.set_facecolor('#F8FAFC')
+    fig.patch.set_facecolor('#F8FAFC')
+    
+    return fig
+
+def get_strength_comment(category, score):
+    """Return a comment about the organization's strength in a specific category."""
+    if "Data" in category:
+        return "Strong data management practices and governance provide a solid foundation for AI initiatives."
+    elif "Infrastructure" in category:
+        return "Robust technical infrastructure and computing resources enable efficient AI model training and deployment."
+    elif "Talent" in category:
+        return "Well-developed AI talent acquisition, training, and retention strategies support AI capabilities."
+    elif "Strategy" in category:
+        return "Clear AI strategy aligned with business objectives provides direction for AI initiatives."
+    elif "Culture" in category:
+        return "Strong innovation culture and change management capabilities enable AI adoption."
+    elif "Governance" in category:
+        return "Established governance frameworks ensure ethical and responsible AI implementation."
+    else:
+        return "Your organization demonstrates significant strengths in this area."
+
+def get_improvement_comment(category, score):
+    """Return a comment about areas for improvement in a specific category."""
+    if "Data" in category:
+        return "Enhance data quality, accessibility, governance, and management practices to build a stronger foundation for AI."
+    elif "Infrastructure" in category:
+        return "Invest in technical infrastructure, cloud resources, and MLOps capabilities to support AI initiatives."
+    elif "Talent" in category:
+        return "Develop structured talent acquisition, upskilling programs, and retention strategies for AI professionals."
+    elif "Strategy" in category:
+        return "Create a more comprehensive AI strategy aligned with business objectives and develop clear roadmaps."
+    elif "Culture" in category:
+        return "Foster a more innovative culture with stronger change management capabilities to accelerate AI adoption."
+    elif "Governance" in category:
+        return "Establish more robust governance frameworks to ensure ethical, responsible AI implementation."
+    else:
+        return "Focus on improving capabilities in this area to enhance overall AI readiness."
+
+def get_recommendations(category, score):
+    """Return specific recommendations based on category and score."""
+    recommendations = []
+    
+    if "Data" in category:
+        recommendations = [
+            "Implement a comprehensive data governance framework with clear ownership and quality standards",
+            "Develop a centralized data catalog to improve accessibility and discoverability",
+            "Establish data quality monitoring processes specific to AI use cases",
+            "Create standardized data preparation pipelines for common AI scenarios"
+        ]
+    elif "Infrastructure" in category:
+        recommendations = [
+            "Evaluate and scale cloud infrastructure to support AI workloads effectively",
+            "Implement MLOps practices for model deployment, monitoring, and lifecycle management",
+            "Establish a standardized AI development environment with necessary tools and frameworks",
+            "Create clear infrastructure scaling strategies to handle growing AI demands"
+        ]
+    elif "Talent" in category:
+        recommendations = [
+            "Develop a structured AI talent acquisition strategy with clear role definitions",
+            "Create internal upskilling programs for existing technical staff",
+            "Establish partnerships with academic institutions or AI research centers",
+            "Implement knowledge sharing mechanisms for AI expertise across teams"
+        ]
+    elif "Strategy" in category:
+        recommendations = [
+            "Define a clear enterprise AI strategy with specific business outcomes",
+            "Create a prioritized roadmap for AI use cases aligned with business value",
+            "Establish processes to measure and communicate AI initiative ROI",
+            "Develop a structured approach to AI security and risk management"
+        ]
+    elif "Culture" in category:
+        recommendations = [
+            "Foster executive-level AI championship and visible leadership support",
+            "Implement structured change management processes for AI initiatives",
+            "Create mechanisms for cross-functional collaboration on AI projects",
+            "Establish innovation channels for employees to propose AI use cases"
+        ]
+    elif "Governance" in category:
+        recommendations = [
+            "Create a comprehensive AI ethics framework and review process",
+            "Establish AI governance committee with clear responsibilities",
+            "Develop processes for ongoing compliance monitoring of AI systems",
+            "Implement transparent AI documentation standards and model cards"
+        ]
+    
+    # Return top 3 recommendations based on score
+    if score < 30:
+        return recommendations[:3]  # Return first 3 for low scores
+    elif score < 60:
+        return recommendations[1:4]  # Return middle 3 for medium scores
+    else:
+        return recommendations[1:]  # Return last 3 for higher scores
+
 # Main application function
 def main():
     # Setup session state for storing responses if not already present
@@ -595,9 +1682,9 @@ def main():
     # App title and description
     st.markdown("""
     <div style="text-align: center; padding: 20px 0;">
-        <h1 style="color: #3949AB; font-size: 2.5rem; margin-bottom: 0.5rem;">Enterprise AI Readiness Assessment</h1>
+        <h1 style="color: #1E293B; font-size: 2.5rem; margin-bottom: 0.5rem;">Enterprise AI Readiness Assessment</h1>
         <p style="font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto 1.5rem auto;">
-            Evaluate your organization's AI maturity across six critical dimensions
+            Evaluate your organization's capacity to implement and scale AI solutions 
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -613,8 +1700,8 @@ def main():
         # Add a company logo placeholder
         logo_html = """
         <div style="background-color: white; border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
-            <h1 style="color: #3949AB; font-size: 1.8rem; margin: 0;">AI READY</h1>
-            <p style="color: #00ACC1; margin: 0; font-weight: 500;">Enterprise Assessment</p>
+            <h1 style="color: #1E293B; font-size: 1.8rem; margin: 0;">AI READY</h1>
+            <p style="color: #0284C7; margin: 0; font-weight: 500;">Enterprise Assessment</p>
         </div>
         """
         st.markdown(logo_html, unsafe_allow_html=True)
@@ -651,6 +1738,7 @@ def main():
     elif st.session_state.nav == "Results":
         if not st.session_state.responses:
             st.warning("Please complete the assessment first.")
+            st.markdown('<style>div.stButton > button:first-child { background-color: #FFFFFF !important; color: #0284C7 !important; }</style>', unsafe_allow_html=True)
             st.button("Start Assessment", on_click=lambda: setattr(st.session_state, 'nav', 'Assessment'))
         else:
             st.session_state.show_results = True
@@ -660,144 +1748,186 @@ def main():
 
 # Function to show the home page
 def show_home_page():
-    # Hero section with cards
+    # Header with logo
     st.markdown("""
-    <div class="card" style="padding: 2rem; text-align: center; margin-bottom: 2rem; background: linear-gradient(135deg, #3949AB 0%, #5C6BC0 100%); color: white;">
-        <h2 style="color: white; font-size: 1.8rem; margin-bottom: 1rem;">Comprehensive AI Readiness Assessment</h2>
-        <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
-            This enterprise-grade assessment tool helps organizations evaluate their AI readiness 
-            across six critical dimensions using a sophisticated Q-Learning algorithm.
-        </p>
-        <div style="margin-top: 1.5rem;">
-            <b>Start your assessment journey today →</b>
-        </div>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">AI Readiness Assessment</h1>
+        <p class="dashboard-subtitle">Evaluate your organization's capacity to implement and scale AI solutions</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Feature overview section
+    # Overview section
     st.markdown("""
-    <h2 style="color: #3949AB; margin-top: 2rem;">Assessment Framework</h2>
-    <p>Our AI readiness assessment analyzes six critical dimensions to provide a comprehensive view of your organization's preparedness for AI adoption.</p>
+    <div class="card primary">
+        <h3>About the Assessment</h3>
+        <p>This enterprise-grade AI Readiness Assessment evaluates your organization across six key dimensions 
+        that are critical for successful AI implementation. Using Q-learning algorithms, the assessment 
+        adapts to your specific context and provides tailored recommendations.</p>
+    </div>
     """, unsafe_allow_html=True)
     
-    # Create columns for the dimensions
-    col1, col2, col3 = st.columns(3)
+    # Feature section
+    col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        <div class="card">
-            <h3 style="color: #3949AB;">AI Governance</h3>
-            <p>Evaluates the policies, procedures, and oversight mechanisms for responsible AI implementation.</p>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h4 class="feature-title">Comprehensive Analysis</h4>
+            <p class="feature-description">Get a detailed assessment of your organization's AI readiness across 6 critical dimensions.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div class="card">
-            <h3 style="color: #3949AB;">AI Culture</h3>
-            <p>Assesses organizational culture, leadership vision, and change management readiness for AI transformation.</p>
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h4 class="feature-title">Advanced Diagnostics</h4>
+            <p class="feature-description">Our assessment uses Q-learning algorithms to identify the most impactful areas for your AI initiatives.</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div class="card">
-            <h3 style="color: #3949AB;">AI Data</h3>
-            <p>Measures data quality, accessibility, governance, and infrastructure for AI systems.</p>
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h4 class="feature-title">Executive Dashboard</h4>
+            <p class="feature-description">Visualize your AI readiness with professional charts that highlight strengths and opportunities.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div class="card">
-            <h3 style="color: #3949AB;">AI Infrastructure</h3>
-            <p>Evaluates compute resources, storage solutions, and technical foundation for AI workloads.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div class="card">
-            <h3 style="color: #3949AB;">AI Strategy</h3>
-            <p>Analyzes strategic alignment, security practices, and deployment approach for AI initiatives.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="card">
-            <h3 style="color: #3949AB;">AI Talent</h3>
-            <p>Measures talent acquisition, training, leadership, and collaboration capabilities for AI teams.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # How it works section
-    st.markdown("""
-    <h2 style="color: #3949AB; margin-top: 2rem;">How It Works</h2>
-    """, unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div class="card" style="text-align: center;">
-            <h3 style="color: #3949AB;">1. Answer Questions</h3>
-            <p>Complete the assessment questionnaire across six AI readiness dimensions.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="card" style="text-align: center;">
-            <h3 style="color: #3949AB;">2. AI Analysis</h3>
-            <p>Our Q-Learning algorithm analyzes responses to calculate accurate readiness scores.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div class="card" style="text-align: center;">
-            <h3 style="color: #3949AB;">3. Get Insights</h3>
-            <p>Receive detailed visualizations, scores, and actionable recommendations.</p>
+        <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h4 class="feature-title">Actionable Recommendations</h4>
+            <p class="feature-description">Receive practical recommendations to enhance your organization's AI capabilities and accelerate transformation.</p>
         </div>
         """, unsafe_allow_html=True)
     
     # Call to action
+    st.markdown("<div style='text-align: center; margin-top: 2rem;'>", unsafe_allow_html=True)
     st.markdown("""
-    <div style="text-align: center; margin-top: 2rem; margin-bottom: 3rem;">
-        <h2 style="color: #3949AB;">Ready to Assess Your AI Readiness?</h2>
+    <style>
+    div.stButton > button {
+        background-color: #0284C7 !important;
+        color: white !important;
+        border: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    if st.button("Start Assessment", type="primary", use_container_width=True):
+        st.session_state.nav = "Assessment"
+        st.session_state.assessment_started = True
+        st.experimental_rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Dimension section
+    st.markdown("<h3 style='margin-top: 2rem;'>Assessment Dimensions</h3>", unsafe_allow_html=True)
+    
+    # First row of dimensions
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="card primary" style="height: 100%;">
+            <h4 style="color: var(--primary);">Data</h4>
+            <p>Evaluates data quality, accessibility, governance, and management practices.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="card primary" style="height: 100%;">
+            <h4 style="color: var(--primary);">Infrastructure</h4>
+            <p>Assesses compute resources, MLOps capabilities, and cloud readiness.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="card primary" style="height: 100%;">
+            <h4 style="color: var(--primary);">Talent</h4>
+            <p>Measures AI talent acquisition, retention, and skills development strategies.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Second row of dimensions
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="card primary" style="height: 100%;">
+            <h4 style="color: var(--primary);">Strategy</h4>
+            <p>Evaluates AI vision, roadmap, and alignment with business objectives.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="card primary" style="height: 100%;">
+            <h4 style="color: var(--primary);">Culture</h4>
+            <p>Assesses organizational culture, innovation mindset, and change management.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="card primary" style="height: 100%;">
+            <h4 style="color: var(--primary);">Governance</h4>
+            <p>Measures ethical AI practices, risk management, and regulatory compliance.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Add a download button for the report
+    st.subheader("Download Full Report")
+    st.markdown("""
+    <div class="card">
+        <p>Download a comprehensive report of your AI readiness assessment results, including detailed scores, 
+        charts, and personalized recommendations.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Start button centered
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("Start Assessment", type="primary", use_container_width=True):
-            st.session_state.nav = "Assessment"
-            st.experimental_rerun()
+    # Create a PDF report (placeholder for now)
+    st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #0284C7 !important;
+        color: white !important;
+        border: none !important;
+    }
+    .stButton > button p { color: white !important; }
+.stButton > button * { color: white !important; }
+button p { color: white !important; }
+    </style>
+    """, unsafe_allow_html=True)
+    if st.button("Generate PDF Report", type="primary"):
+        st.success("Report generation feature will be available in the next update.")
 
 # Function to show about page
 def show_about_page():
     st.markdown("""
     <div class="card">
-        <h2 style="color: #3949AB;">About the AI Readiness Assessment Tool</h2>
+        <h2>About the AI Readiness Assessment Tool</h2>
         <p>
             This enterprise-grade assessment tool helps organizations evaluate their AI readiness 
             across six critical dimensions using a sophisticated Q-Learning algorithm.
         </p>
-        <h3 style="color: #3949AB; margin-top: 1.5rem;">Methodology</h3>
+        <h3>Methodology</h3>
         <p>
             Our assessment framework is based on industry best practices and research in organizational AI readiness.
             The tool employs Q-Learning, a reinforcement learning technique, to weight different aspects of AI readiness
             based on their relative importance for your specific organizational context.
         </p>
-        <h3 style="color: #3949AB; margin-top: 1.5rem;">Q-Learning Algorithm</h3>
+        <h3>Q-Learning Algorithm</h3>
         <p>
             The Q-Learning algorithm used in this assessment enables adaptive weighting of different readiness categories:
         </p>
         <ul>
             <li><b>Dynamic Weights:</b> The algorithm learns which factors are most important for your organization's AI readiness.</li>
-            <li><b>Softmax Transformation:</b> Converts learned values into proportional weights.</li>
+            <li><b>Softmax Transformation:</b> Converts learned values into probability weights that sum to 100%.</li>
             <li><b>Contextual Adaptation:</b> Adjusts based on the interrelationships between different readiness dimensions.</li>
         </ul>
-        <h3 style="color: #3949AB; margin-top: 1.5rem;">Privacy & Data</h3>
+        <p>This approach allows the assessment to adapt and emphasize the most critical areas for your organization.</p>
+        <h3>Privacy & Data</h3>
         <p>
             All assessment data remains local to your device. No information is transmitted to external servers.
             You can safely use this tool for internal organizational assessments without data privacy concerns.
@@ -814,10 +1944,17 @@ def show_questionnaire(all_questionnaires):
         st.warning("No questionnaires were loaded successfully. Please check your installation.")
         return
     
+    st.markdown("""
+    <div class="dashboard-header">
+        <h2 class="dashboard-title">AI Readiness Questionnaire</h2>
+        <p class="dashboard-subtitle">Evaluate your organization's AI readiness across key dimensions</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Define the answer options with descriptions
     answer_options = [
         "Not Implemented - No evidence of implementation",
-        "Initial - Limited or ad-hoc implementation",
+        "Initial - Basic or ad-hoc implementation with limited scope",
         "Defined - Formalized but inconsistent implementation",
         "Managed - Consistent implementation with monitoring",
         "Optimized - Fully implemented with continuous improvement"
@@ -829,28 +1966,53 @@ def show_questionnaire(all_questionnaires):
     # Display questions for each category
     for i, (category, questionnaire) in enumerate(all_questionnaires.items()):
         with tabs[i]:
-            st.markdown(f"<h3 style='color:{theme_colors['primary']};'>{category} Assessment</h3>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="category-header">
+                <h3>{category} Assessment</h3>
+                <p>Answer all questions to evaluate your organization's {category.replace('AI ', '')} readiness.</p>
+            </div>
+            """, unsafe_allow_html=True)
             
             # Initialize the category in responses if not exists
             if category not in st.session_state.responses:
                 st.session_state.responses[category] = {}
             
-            # Display each question category as an expander
+            # Calculate progress for this category
+            total_questions = sum(len(questions) for _, questions in questionnaire.items())
+            answered_questions = 0
+            for q_category in questionnaire.keys():
+                if q_category in st.session_state.responses.get(category, {}):
+                    answered_questions += sum(1 for ans in st.session_state.responses[category].get(q_category, []) if ans is not None)
+            
+            progress_percentage = int((answered_questions / total_questions) * 100) if total_questions > 0 else 0
+            
+            # Display progress bar
+            st.markdown(f"""
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span>Progress</span>
+                    <span class="progress-percentage">{progress_percentage}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {progress_percentage}%;"></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Display each question category
             for q_category, questions in questionnaire.items():
                 # Initialize the question category in responses if not exists
                 if q_category not in st.session_state.responses[category]:
                     st.session_state.responses[category][q_category] = []
                 
                 with st.expander(f"{q_category}", expanded=True):
+                    st.markdown(f"""
+                    <div class="subcategory-header">
+                        <p>{q_category}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
                     for j, question in enumerate(questions):
-                        # Display the question with custom styling
-                        st.markdown(f"""
-                        <div class="card" style="padding: 1rem; margin-bottom: 1rem; background-color: #F8F9FA;">
-                            <h4 style="color: {theme_colors['primary']}; margin-top: 0;">Question {j+1}</h4>
-                            <p style="margin-bottom: 0.5rem;">{question}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
                         # Create response key
                         response_key = f"{category}_{q_category}_{j}"
                         
@@ -861,6 +2023,17 @@ def show_questionnaire(all_questionnaires):
                         # Set default value from session state if exists
                         default_val = st.session_state.responses[category][q_category][j] if j < len(st.session_state.responses[category][q_category]) else None
                         
+                        # Display the question with custom styling
+                        st.markdown(f"""
+                        <div class="question-card">
+                            <div class="question-number">Question {j+1}</div>
+                            <div class="question-text">{question}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # Add option label
+                        st.markdown('<div class="option-label">Select your organization\'s current state:</div>', unsafe_allow_html=True)
+                        
                         # Get response with radio buttons
                         response = st.radio(
                             label=f"Select answer for Question {j+1}",
@@ -868,11 +2041,11 @@ def show_questionnaire(all_questionnaires):
                             format_func=lambda x: answer_options[x],
                             key=response_key,
                             index=default_val if default_val is not None else None,
-                            horizontal=False
+                            label_visibility="collapsed"
                         )
                         
-                        # Add a divider
-                        st.markdown("<hr style='margin: 1rem 0; opacity: 0.2;'>", unsafe_allow_html=True)
+                        # Add a divider between questions
+                        st.markdown('<hr class="question-divider">', unsafe_allow_html=True)
                         
                         # Store the response in session state
                         if response is not None:
@@ -885,19 +2058,27 @@ def show_questionnaire(all_questionnaires):
                             # Store the response
                             st.session_state.responses[category][q_category][question_index] = response
     
-    # Submit button
-    st.markdown("<div style='text-align: center; margin-top: 30px;'>", unsafe_allow_html=True)
-    submit = st.button("Submit Assessment", type="primary", use_container_width=False)
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Submit button with enhanced styling
+    st.markdown("""
+    <div class="submit-container">
+        <p class="submit-message">Please ensure all questions are answered before submitting</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        submit = st.button("Submit Assessment", type="primary", use_container_width=True)
     
     if submit:
         # Check if all questions have been answered
         all_answered = True
+        unanswered_categories = []
+        
         for category, category_responses in st.session_state.responses.items():
             for q_category, responses in category_responses.items():
                 if None in responses or len(responses) == 0:
                     all_answered = False
-                    break
+                    unanswered_categories.append(f"{category} - {q_category}")
         
         if all_answered:
             st.session_state.show_results = True
@@ -906,220 +2087,239 @@ def show_questionnaire(all_questionnaires):
             st.session_state.nav = "Results"
             st.experimental_rerun()
         else:
-            st.error("Please answer all questions before submitting.")
+            st.error(f"Please answer all questions before submitting. Unanswered sections: {', '.join(unanswered_categories[:3])}{'...' if len(unanswered_categories) > 3 else ''}")
 
 # Function to show the results
 def show_results():
-    st.header("AI Readiness Assessment Results")
+    # Calculate the overall score and category scores
+    overall_score = 0
+    category_scores = {}
     
-    # Calculate scores
-    category_scores, q_values, softmax_weights, overall_scores = calculate_scores(st.session_state.responses)
+    for category, category_responses in st.session_state.responses.items():
+        category_score = 0
+        question_count = 0
+        
+        for q_category, responses in category_responses.items():
+            for response in responses:
+                if response is not None:
+                    category_score += response
+                    question_count += 1
+        
+        if question_count > 0:
+            avg_category_score = (category_score / question_count) * 25  # Scale to 100
+            category_scores[category] = avg_category_score
+            overall_score += avg_category_score
     
+    overall_score = overall_score / len(category_scores) if category_scores else 0
+
+    # Header
     st.markdown("""
-    <div class="card">
-        <h2>Executive Summary</h2>
-        <p>This dashboard presents your organization's AI readiness assessment results across multiple dimensions.
-        The scores are calculated using a Q-learning algorithm that weights different aspects of AI readiness.</p>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">AI Readiness Assessment Results</h1>
+        <p class="dashboard-subtitle">Your organization's AI readiness profile with insights and recommendations</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Display overall scores
-    st.subheader("Overall Readiness Scores")
+    # Executive summary
+    st.markdown("""
+    <div class="card primary">
+        <h3>Executive Summary</h3>
+        <p>This assessment provides a comprehensive view of your organization's readiness to implement and scale AI solutions. 
+        The results are based on your responses across six key dimensions that are critical for AI success.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Create columns for the overall scores and radar chart
+    # Overall score and radar chart in the same row
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        # Display overall scores in a table
-        overall_df = pd.DataFrame({
-            'Assessment Category': list(overall_scores.keys()),
-            'Readiness Score': [round(score * 100 / 4, 1) for score in overall_scores.values()]
-        })
+        # Display the overall score with a gauge chart
+        st.markdown("<h3>Overall Readiness Score</h3>", unsafe_allow_html=True)
         
-        overall_df = overall_df.sort_values('Readiness Score', ascending=False)
+        # Create a gauge chart
+        fig_gauge = create_gauge_chart(overall_score)
+        st.pyplot(fig_gauge)
         
-        # Calculate average overall score
-        avg_score = overall_df['Readiness Score'].mean()
-        
-        # Display the table with custom styling
-        st.dataframe(
-            overall_df.style.background_gradient(cmap='Blues', subset=['Readiness Score']),
-            hide_index=True,
-            use_container_width=True
-        )
-        
-        # Create gauge chart for average score
-        gauge_img = create_gauge_chart(avg_score * 4 / 100, "Average AI Readiness")
-        st.image(gauge_img, use_column_width=True)
-        
-        # Interpretation of the score
-        if avg_score >= 75:
-            st.success("**Analysis**: Your organization shows strong AI readiness across multiple dimensions.")
-        elif avg_score >= 50:
-            st.info("**Analysis**: Your organization has moderate AI readiness with room for improvement.")
-        else:
-            st.warning("**Analysis**: Your organization needs significant improvement in AI readiness.")
+        # Readiness level text
+        readiness_level = "Low" if overall_score < 30 else "Moderate" if overall_score < 60 else "High" if overall_score < 80 else "Advanced"
+        st.markdown(f"""
+        <div class="card" style="margin-top: 1rem;">
+            <h4>AI Readiness Level: <span style="color:{get_color_for_score(overall_score)};">{readiness_level}</span></h4>
+            <p>Your organization is at a <strong>{readiness_level.lower()}</strong> level of AI readiness.</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
-        # Create radar chart for overall scores using matplotlib
-        categories = list(overall_scores.keys())
-        values = list(overall_scores.values())
+        # Display the radar chart
+        st.markdown("<h3>Dimension Analysis</h3>", unsafe_allow_html=True)
         
-        img = create_radar_chart(categories, values, "AI Readiness Radar")
-        st.image(img, use_column_width=True)
+        # Create and display the radar chart
+        categories = list(category_scores.keys())
+        scores = [category_scores[cat] for cat in categories]
+        
+        # Format categories for display (remove 'AI ' prefix)
+        display_categories = [cat.replace('AI ', '') for cat in categories]
+        
+        fig_radar = create_radar_chart(display_categories, scores)
+        st.pyplot(fig_radar)
     
-    # Detailed results for each assessment category
-    st.subheader("Detailed Assessment Results")
+    # Strength and improvement areas
+    st.markdown("<h3>Strengths & Improvement Areas</h3>", unsafe_allow_html=True)
     
-    for category, scores in category_scores.items():
-        with st.expander(f"{category} Assessment Details"):
-            # Create columns for category scores and weights
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown(f"<h3 style='color:{theme_colors['primary']};'>{category} Category Scores</h3>", unsafe_allow_html=True)
-                
-                # Convert to percentage for better readability
-                cat_scores_df = pd.DataFrame({
-                    'Category': list(scores.keys()),
-                    'Score (%)': [round(score * 100 / 4, 1) for score in scores.values()]
-                })
-                
-                # Display the table with custom styling
-                st.dataframe(
-                    cat_scores_df.style.background_gradient(cmap='Blues', subset=['Score (%)']),
-                    hide_index=True,
-                    use_container_width=True
-                )
-            
-            with col2:
-                # Create bar chart for category scores using matplotlib
-                img = create_category_bar_chart(list(scores.keys()), list(scores.values()), f"{category} Category Scores")
-                st.image(img, use_column_width=True)
-            
-            # Display Q-values and weights with heatmap
-            st.markdown(f"<h3 style='color:{theme_colors['primary']};'>{category} Q-Learning Analysis</h3>", unsafe_allow_html=True)
-            
-            # Create heatmap for Q-values and weights
-            q_vals = [q_values[category][cat] for cat in scores.keys()]
-            weight_vals = [softmax_weights[category][i] for i, _ in enumerate(scores.keys())]
-            
-            heatmap_img = create_qvalue_weight_heatmap(
-                list(scores.keys()),
-                q_vals,
-                weight_vals,
-                f"{category} Q-Learning Weights Analysis"
-            )
-            st.image(heatmap_img, use_column_width=True)
-            
-            # Add explanation of Q-learning
-            with st.expander("Understanding Q-Learning and Weights"):
-                st.markdown("""
-                **Q-Learning** is a reinforcement learning technique that helps prioritize different aspects of AI readiness:
-                
-                * **Q-Values**: Represent the learned importance of each category through iterative reinforcement.
-                * **Softmax Weights**: Transform Q-values into probability weights that sum to 100%.
-                * **Higher weights** indicate categories that have greater influence on the overall score.
-                
-                This approach allows the assessment to adapt and emphasize the most critical areas for your organization.
-                """)
+    col1, col2 = st.columns(2)
     
-    # Recommendations section
-    st.subheader("Recommendations for Improvement")
-    
-    # Find the lowest scoring categories for each assessment
-    recommendations = {}
-    for category, scores in category_scores.items():
-        if scores:  # Check if scores dictionary is not empty
-            min_score_category = min(scores.items(), key=lambda x: x[1])
-            recommendations[category] = {
-                'category': min_score_category[0],
-                'score': min_score_category[1]
-            }
-    
-    # Create columns for recommendations
-    cols = st.columns(3)
-    col_idx = 0
-    
-    # Display recommendations in cards
-    for category, rec in recommendations.items():
-        with cols[col_idx]:
+    with col1:
+        # Find the top 2 highest scoring categories
+        sorted_scores = sorted(category_scores.items(), key=lambda x: x[1], reverse=True)
+        st.markdown("""
+        <div class="card success">
+            <h4>Key Strengths</h4>
+            <p>Your organization demonstrates strong capabilities in these areas:</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        for i, (category, score) in enumerate(sorted_scores[:2]):
+            display_name = category.replace('AI ', '')
+            score_percent = int(score)
             st.markdown(f"""
-            <div class="card" style="height: 300px; overflow-y: auto;">
-                <h3 style="color:{theme_colors['primary']};">{category}</h3>
-                <p><b>Focus Area:</b> {rec['category']}</p>
-                <p><b>Current Score:</b> {round(rec['score'] * 100 / 4, 1)}%</p>
-                <h4>Recommendations:</h4>
-                <ul>
-            """, unsafe_allow_html=True)
-            
-            # Generate recommendations based on the category
-            if category == "AI Governance":
-                st.markdown("""
-                * Establish clear policies for ethical AI development
-                * Assign explicit algorithmic accountability roles
-                * Stay updated with regulatory compliance requirements
-                * Implement robust bias mitigation mechanisms
-                """)
-            elif category == "AI Culture":
-                st.markdown("""
-                * Develop a clear AI strategy and vision
-                * Encourage AI experimentation and innovation
-                * Promote cross-functional AI collaboration
-                * Implement effective AI change management practices
-                """)
-            elif category == "AI Data":
-                st.markdown("""
-                * Improve data accessibility and cataloging
-                * Strengthen data governance and compliance
-                * Enhance data quality and processing pipelines
-                * Address bias and fairness in AI data
-                * Upgrade data infrastructure and security
-                """)
-            elif category == "AI Infrastructure":
-                st.markdown("""
-                * Invest in necessary compute resources for AI workloads
-                * Optimize storage and data access for AI
-                * Improve AI deployment efficiency
-                * Implement HPC and performance optimization
-                * Enhance MLOps readiness
-                """)
-            elif category == "AI Strategy":
-                st.markdown("""
-                * Strengthen data security and encryption
-                * Implement robust model access controls
-                * Secure AI APIs against unauthorized access
-                * Develop a comprehensive AI deployment strategy
-                * Establish effective AI monitoring and logging
-                """)
-            elif category == "AI Talent":
-                st.markdown("""
-                * Develop a structured AI talent acquisition strategy
-                * Invest in AI upskilling and training programs
-                * Promote cross-functional AI collaboration
-                * Cultivate AI leadership and culture
-                * Implement MLOps and AI engineering best practices
-                """)
-            
-            st.markdown("""
-                </ul>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h4 style="margin: 0;">{display_name}</h4>
+                    <span style="background-color: #10B981; color: white; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 600; font-size: 0.75rem;">{score_percent}%</span>
+                </div>
+                <div style="height: 0.5rem; background-color: #E2E8F0; border-radius: 9999px; overflow: hidden;">
+                    <div style="height: 100%; width: {score_percent}%; background-color: #10B981; border-radius: 9999px;"></div>
+                </div>
+                <p style="margin-top: 0.75rem; font-size: 0.875rem;">{get_strength_comment(category, score_percent)}</p>
             </div>
             """, unsafe_allow_html=True)
+    
+    with col2:
+        # Find the 2 lowest scoring categories
+        st.markdown("""
+        <div class="card error">
+            <h4>Improvement Areas</h4>
+            <p>Focus on enhancing capabilities in these dimensions:</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        for i, (category, score) in enumerate(sorted_scores[-2:]):
+            display_name = category.replace('AI ', '')
+            score_percent = int(score)
+            st.markdown(f"""
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h4 style="margin: 0;">{display_name}</h4>
+                    <span style="background-color: #EF4444; color: white; padding: 0.25rem 0.5rem; border-radius: 9999px; font-weight: 600; font-size: 0.75rem;">{score_percent}%</span>
+                </div>
+                <div style="height: 0.5rem; background-color: #E2E8F0; border-radius: 9999px; overflow: hidden;">
+                    <div style="height: 100%; width: {score_percent}%; background-color: #EF4444; border-radius: 9999px;"></div>
+                </div>
+                <p style="margin-top: 0.75rem; font-size: 0.875rem;">{get_improvement_comment(category, score_percent)}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # Detailed scores section
+    st.markdown("<h3>Detailed Dimension Scores</h3>", unsafe_allow_html=True)
+    
+    # Create a bar chart for all categories
+    fig_bar = create_bar_chart(categories, scores)
+    st.pyplot(fig_bar)
+    
+    # Create columns for the detailed scores with circular visualizations
+    cols = st.columns(3)
+    
+    for i, (category, score) in enumerate(category_scores.items()):
+        with cols[i % 3]:
+            score_percent = int(score)
+            color = get_color_for_score(score_percent)
+            display_name = category.replace('AI ', '')
             
-            col_idx = (col_idx + 1) % 3
+            st.markdown(f"""
+            <div class="card" style="text-align: center; padding: 1.25rem;">
+                <h4>{display_name}</h4>
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto; background: conic-gradient({color} {score_percent * 3.6}deg, #E2E8F0 0deg); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <div style="position: absolute; width: 90px; height: 90px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 1.5rem; font-weight: 600; color: {color};">{score_percent}%</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
     
-    # Add a download button for the report
-    st.subheader("Download Full Report")
-    st.markdown("""
-    <div class="card">
-        <p>Download a comprehensive report of your AI readiness assessment results, including detailed scores, 
-        charts, and personalized recommendations.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # Recommendations section
+    st.markdown("<h3>Recommended Actions</h3>", unsafe_allow_html=True)
     
-    # Create a PDF report (placeholder for now)
-    if st.button("Generate PDF Report", type="primary"):
-        st.success("Report generation feature will be available in the next update.")
+    # Sort categories by score (lowest first)
+    priority_categories = sorted(category_scores.items(), key=lambda x: x[1])
+    
+    for i, (category, score) in enumerate(priority_categories[:3]):
+        display_name = category.replace('AI ', '')
+        recommendations = get_recommendations(category, score)
+        
+        st.markdown(f"""
+        <div class="card primary">
+            <h4>Priority {i+1}: Enhance {display_name}</h4>
+            <p style="font-size: 0.875rem;">Current score: <strong>{int(score)}%</strong></p>
+            <ul style="margin-top: 0.75rem;">
+                {''.join([f'<li style="margin-bottom: 0.5rem; font-size: 0.875rem;">{rec}</li>' for rec in recommendations])}
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Q-Learning explanation
+    with st.expander("Understanding the Assessment Methodology"):
+        st.markdown("""
+        <div class="card">
+            <h4>Q-Learning Algorithm</h4>
+            <p>This assessment uses a Q-Learning algorithm to evaluate your organization's AI readiness. The algorithm:</p>
+            <ul>
+                <li><b>Learns from patterns</b> in your responses to identify critical areas for improvement</li>
+                <li><b>Weights different dimensions</b> based on their interdependencies</li>
+                <li><b>Adapts to your specific context</b> to provide more relevant recommendations</li>
+            </ul>
+            <p>The scoring model emphasizes practical implementation readiness rather than theoretical capability.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Next steps and export options
+    st.markdown("<h3>Next Steps</h3>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="card">
+            <h4>Re-take Assessment</h4>
+            <p>Update your responses or re-evaluate after implementing changes.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("New Assessment", type="primary", use_container_width=True):
+            st.session_state.responses = {}
+            st.session_state.show_results = False
+            st.session_state.assessment_started = True
+            st.session_state.nav = "Assessment"
+            st.experimental_rerun()
+    
+    with col2:
+        st.markdown("""
+        <div class="card">
+            <h4>Export Results</h4>
+            <p>Download your assessment results as a PDF report.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <style>
+        div.stButton > button {
+            background-color: #0284C7 !important;
+            color: white !important;
+            border: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("Export as PDF", use_container_width=True):
+            st.info("PDF export functionality will be available in the next version.")
 
 if __name__ == "__main__":
     main()

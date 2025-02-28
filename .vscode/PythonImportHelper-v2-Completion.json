@@ -27,24 +27,6 @@
         "documentation": {}
     },
     {
-        "label": "plotly.express",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "plotly.express",
-        "description": "plotly.express",
-        "detail": "plotly.express",
-        "documentation": {}
-    },
-    {
-        "label": "plotly.graph_objects",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "plotly.graph_objects",
-        "description": "plotly.graph_objects",
-        "detail": "plotly.graph_objects",
-        "documentation": {}
-    },
-    {
         "label": "matplotlib.pyplot",
         "kind": 6,
         "isExtraImport": true,
@@ -54,20 +36,12 @@
         "documentation": {}
     },
     {
-        "label": "matplotlib",
+        "label": "matplotlib.patches",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "matplotlib",
-        "description": "matplotlib",
-        "detail": "matplotlib",
-        "documentation": {}
-    },
-    {
-        "label": "LinearSegmentedColormap",
-        "importPath": "matplotlib.colors",
-        "description": "matplotlib.colors",
-        "isExtraImport": true,
-        "detail": "matplotlib.colors",
+        "importPath": "matplotlib.patches",
+        "description": "matplotlib.patches",
+        "detail": "matplotlib.patches",
         "documentation": {}
     },
     {
@@ -80,21 +54,37 @@
         "documentation": {}
     },
     {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "os",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "os",
         "description": "os",
         "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "json",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "json",
-        "description": "json",
-        "detail": "json",
         "documentation": {}
     },
     {
@@ -107,21 +97,12 @@
         "documentation": {}
     },
     {
-        "label": "importlib.util",
+        "label": "json",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "importlib.util",
-        "description": "importlib.util",
-        "detail": "importlib.util",
-        "documentation": {}
-    },
-    {
-        "label": "sys",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
         "documentation": {}
     },
     {
@@ -133,11 +114,92 @@
         "documentation": {}
     },
     {
-        "label": "BytesIO",
-        "importPath": "io",
-        "description": "io",
+        "label": "get_color_for_score",
+        "importPath": "helper_functions",
+        "description": "helper_functions",
         "isExtraImport": true,
-        "detail": "io",
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_strength_comment",
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "isExtraImport": true,
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_improvement_comment",
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "isExtraImport": true,
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_recommendations",
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "isExtraImport": true,
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "create_radar_chart",
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "isExtraImport": true,
+        "detail": "visualization_functions",
+        "documentation": {}
+    },
+    {
+        "label": "create_gauge_chart",
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "isExtraImport": true,
+        "detail": "visualization_functions",
+        "documentation": {}
+    },
+    {
+        "label": "create_bar_chart",
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "isExtraImport": true,
+        "detail": "visualization_functions",
+        "documentation": {}
+    },
+    {
+        "label": "matplotlib.colors",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "matplotlib.colors",
+        "description": "matplotlib.colors",
+        "detail": "matplotlib.colors",
+        "documentation": {}
+    },
+    {
+        "label": "LinearSegmentedColormap",
+        "importPath": "matplotlib.colors",
+        "description": "matplotlib.colors",
+        "isExtraImport": true,
+        "detail": "matplotlib.colors",
+        "documentation": {}
+    },
+    {
+        "label": "LinearSegmentedColormap",
+        "importPath": "matplotlib.colors",
+        "description": "matplotlib.colors",
+        "isExtraImport": true,
+        "detail": "matplotlib.colors",
+        "documentation": {}
+    },
+    {
+        "label": "Figure",
+        "importPath": "matplotlib.figure",
+        "description": "matplotlib.figure",
+        "isExtraImport": true,
+        "detail": "matplotlib.figure",
         "documentation": {}
     },
     {
@@ -321,6 +383,69 @@
         "documentation": {}
     },
     {
+        "label": "get_color_for_score",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def get_color_for_score(score):\n    \"\"\"Return a color based on the score value.\"\"\"\n    if score < 30:\n        return \"#EF4444\"  # Red for low scores\n    elif score < 60:\n        return \"#F59E0B\"  # Amber for medium scores\n    elif score < 80:\n        return \"#10B981\"  # Green for good scores\n    else:\n        return \"#0284C7\"  # Blue for excellent scores",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_radar_chart",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_radar_chart(categories, scores):\n    \"\"\"Create a radar chart for the category scores.\"\"\"\n    # Number of variables\n    N = len(categories)\n    # What will be the angle of each axis in the plot\n    angles = [n / float(N) * 2 * np.pi for n in range(N)]\n    angles += angles[:1]  # Close the loop\n    # Scores need to be in the same order and length as angles\n    scores_for_plot = scores.copy()\n    scores_for_plot += scores_for_plot[:1]  # Close the loop",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_bar_chart",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_bar_chart(categories, scores):\n    \"\"\"Create a horizontal bar chart for category scores.\"\"\"\n    # Format categories for display\n    display_categories = [cat.replace('AI ', '') for cat in categories]\n    # Create the bar chart\n    fig, ax = plt.figure(figsize=(10, 6)), plt.axes()\n    # Plot horizontal bars\n    bars = ax.barh(display_categories, scores, color='#0284C7', alpha=0.7, height=0.5)\n    # Add value labels to the right of each bar\n    for bar in bars:",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_gauge_chart",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_gauge_chart(score):\n    \"\"\"Create a gauge chart for the overall score.\"\"\"\n    # Define the score ranges and colors\n    ranges = [0, 30, 60, 80, 100]\n    colors = ['#EF4444', '#F59E0B', '#10B981', '#0284C7']\n    # Create the figure\n    fig, ax = plt.subplots(figsize=(4, 4), subplot_kw={'projection': 'polar'})\n    # Set the gauge limits (in radians)\n    start_angle = 3*np.pi/4\n    end_angle = -np.pi/4",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_strength_comment",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def get_strength_comment(category, score):\n    \"\"\"Return a comment about the organization's strength in a specific category.\"\"\"\n    if \"Data\" in category:\n        return \"Strong data management practices and governance provide a solid foundation for AI initiatives.\"\n    elif \"Infrastructure\" in category:\n        return \"Robust technical infrastructure and computing resources enable efficient AI model training and deployment.\"\n    elif \"Talent\" in category:\n        return \"Well-developed AI talent acquisition, training, and retention strategies support AI capabilities.\"\n    elif \"Strategy\" in category:\n        return \"Clear AI strategy aligned with business objectives provides direction for AI initiatives.\"",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_improvement_comment",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def get_improvement_comment(category, score):\n    \"\"\"Return a comment about areas for improvement in a specific category.\"\"\"\n    if \"Data\" in category:\n        return \"Enhance data quality, accessibility, governance, and management practices to build a stronger foundation for AI.\"\n    elif \"Infrastructure\" in category:\n        return \"Invest in technical infrastructure, cloud resources, and MLOps capabilities to support AI initiatives.\"\n    elif \"Talent\" in category:\n        return \"Develop structured talent acquisition, upskilling programs, and retention strategies for AI professionals.\"\n    elif \"Strategy\" in category:\n        return \"Create a more comprehensive AI strategy aligned with business objectives and develop clear roadmaps.\"",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_recommendations",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def get_recommendations(category, score):\n    \"\"\"Return specific recommendations based on category and score.\"\"\"\n    recommendations = []\n    if \"Data\" in category:\n        recommendations = [\n            \"Implement a comprehensive data governance framework with clear ownership and quality standards\",\n            \"Develop a centralized data catalog to improve accessibility and discoverability\",\n            \"Establish data quality monitoring processes specific to AI use cases\",\n            \"Create standardized data preparation pipelines for common AI scenarios\"\n        ]",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "ai_readiness_assessment_app",
@@ -334,7 +459,7 @@
         "kind": 2,
         "importPath": "ai_readiness_assessment_app",
         "description": "ai_readiness_assessment_app",
-        "peekOfCode": "def show_home_page():\n    # Hero section with cards\n    st.markdown(\"\"\"\n    <div class=\"card\" style=\"padding: 2rem; text-align: center; margin-bottom: 2rem; background: linear-gradient(135deg, #3949AB 0%, #5C6BC0 100%); color: white;\">\n        <h2 style=\"color: white; font-size: 1.8rem; margin-bottom: 1rem;\">Comprehensive AI Readiness Assessment</h2>\n        <p style=\"font-size: 1.1rem; margin-bottom: 1.5rem;\">\n            This enterprise-grade assessment tool helps organizations evaluate their AI readiness \n            across six critical dimensions using a sophisticated Q-Learning algorithm.\n        </p>\n        <div style=\"margin-top: 1.5rem;\">",
+        "peekOfCode": "def show_home_page():\n    # Header with logo\n    st.markdown(\"\"\"\n    <div class=\"dashboard-header\">\n        <h1 class=\"dashboard-title\">AI Readiness Assessment</h1>\n        <p class=\"dashboard-subtitle\">Evaluate your organization's capacity to implement and scale AI solutions</p>\n    </div>\n    \"\"\", unsafe_allow_html=True)\n    # Overview section\n    st.markdown(\"\"\"",
         "detail": "ai_readiness_assessment_app",
         "documentation": {}
     },
@@ -343,7 +468,7 @@
         "kind": 2,
         "importPath": "ai_readiness_assessment_app",
         "description": "ai_readiness_assessment_app",
-        "peekOfCode": "def show_about_page():\n    st.markdown(\"\"\"\n    <div class=\"card\">\n        <h2 style=\"color: #3949AB;\">About the AI Readiness Assessment Tool</h2>\n        <p>\n            This enterprise-grade assessment tool helps organizations evaluate their AI readiness \n            across six critical dimensions using a sophisticated Q-Learning algorithm.\n        </p>\n        <h3 style=\"color: #3949AB; margin-top: 1.5rem;\">Methodology</h3>\n        <p>",
+        "peekOfCode": "def show_about_page():\n    st.markdown(\"\"\"\n    <div class=\"card\">\n        <h2>About the AI Readiness Assessment Tool</h2>\n        <p>\n            This enterprise-grade assessment tool helps organizations evaluate their AI readiness \n            across six critical dimensions using a sophisticated Q-Learning algorithm.\n        </p>\n        <h3>Methodology</h3>\n        <p>",
         "detail": "ai_readiness_assessment_app",
         "documentation": {}
     },
@@ -352,7 +477,7 @@
         "kind": 2,
         "importPath": "ai_readiness_assessment_app",
         "description": "ai_readiness_assessment_app",
-        "peekOfCode": "def show_questionnaire(all_questionnaires):\n    st.header(\"AI Readiness Questionnaire\")\n    # Check if we have any questionnaires to display\n    if not all_questionnaires:\n        st.warning(\"No questionnaires were loaded successfully. Please check your installation.\")\n        return\n    # Define the answer options with descriptions\n    answer_options = [\n        \"Not Implemented - No evidence of implementation\",\n        \"Initial - Limited or ad-hoc implementation\",",
+        "peekOfCode": "def show_questionnaire(all_questionnaires):\n    st.header(\"AI Readiness Questionnaire\")\n    # Check if we have any questionnaires to display\n    if not all_questionnaires:\n        st.warning(\"No questionnaires were loaded successfully. Please check your installation.\")\n        return\n    st.markdown(\"\"\"\n    <div class=\"dashboard-header\">\n        <h2 class=\"dashboard-title\">AI Readiness Questionnaire</h2>\n        <p class=\"dashboard-subtitle\">Evaluate your organization's AI readiness across key dimensions</p>",
         "detail": "ai_readiness_assessment_app",
         "documentation": {}
     },
@@ -361,7 +486,7 @@
         "kind": 2,
         "importPath": "ai_readiness_assessment_app",
         "description": "ai_readiness_assessment_app",
-        "peekOfCode": "def show_results():\n    st.header(\"AI Readiness Assessment Results\")\n    # Calculate scores\n    category_scores, q_values, softmax_weights, overall_scores = calculate_scores(st.session_state.responses)\n    st.markdown(\"\"\"\n    <div class=\"card\">\n        <h2>Executive Summary</h2>\n        <p>This dashboard presents your organization's AI readiness assessment results across multiple dimensions.\n        The scores are calculated using a Q-learning algorithm that weights different aspects of AI readiness.</p>\n    </div>",
+        "peekOfCode": "def show_results():\n    # Calculate the overall score and category scores\n    overall_score = 0\n    category_scores = {}\n    for category, category_responses in st.session_state.responses.items():\n        category_score = 0\n        question_count = 0\n        for q_category, responses in category_responses.items():\n            for response in responses:\n                if response is not None:",
         "detail": "ai_readiness_assessment_app",
         "documentation": {}
     },
@@ -370,7 +495,7 @@
         "kind": 5,
         "importPath": "ai_readiness_assessment_app",
         "description": "ai_readiness_assessment_app",
-        "peekOfCode": "theme_colors = {\n    \"primary\": \"#3949AB\",    # Deep blue\n    \"secondary\": \"#00ACC1\",  # Cyan\n    \"background\": \"#FAFAFA\", # Light grey\n    \"success\": \"#4CAF50\",    # Green\n    \"warning\": \"#FF9800\",    # Orange\n    \"error\": \"#F44336\",      # Red\n    \"text\": \"#212121\",       # Dark grey\n    \"accent1\": \"#7E57C2\",    # Purple\n    \"accent2\": \"#26A69A\",    # Teal",
+        "peekOfCode": "theme_colors = {\n    'primary': '#1E293B',     # Slate 800\n    'secondary': '#475569',   # Slate 600\n    'accent': '#0284C7',      # Sky 600\n    'success': '#059669',     # Emerald 600\n    'warning': '#D97706',     # Amber 600\n    'error': '#EF4444',       # Red 600\n    'background': '#F8FAFC',  # Slate 50\n    'card': '#FFFFFF',        # White\n    'text': '#334155',        # Slate 700",
         "detail": "ai_readiness_assessment_app",
         "documentation": {}
     },
@@ -588,6 +713,42 @@
         "description": "data-scoring-with-qlearning-questionnaire",
         "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Data Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
         "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "get_color_for_score",
+        "kind": 2,
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "peekOfCode": "def get_color_for_score(score):\n    \"\"\"\n    Returns an appropriate color based on the score range\n    \"\"\"\n    if score < 30:\n        return \"#EF4444\"  # Red\n    elif score < 60:\n        return \"#F59E0B\"  # Amber\n    elif score < 80:\n        return \"#10B981\"  # Green",
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_strength_comment",
+        "kind": 2,
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "peekOfCode": "def get_strength_comment(category, score):\n    \"\"\"\n    Return a customized strength comment based on the category and score\n    \"\"\"\n    if category == \"AI Governance\":\n        return \"Your organization has established strong AI governance processes with clear policies and accountability structures.\"\n    elif category == \"AI Data\":\n        return \"You have robust data management practices, with high-quality data that is well organized and accessible.\"\n    elif category == \"AI Infrastructure\":\n        return \"Your technical infrastructure is well-equipped to support AI initiatives with adequate compute and scalable environments.\"",
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_improvement_comment",
+        "kind": 2,
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "peekOfCode": "def get_improvement_comment(category, score):\n    \"\"\"\n    Return a customized improvement comment based on the category and score\n    \"\"\"\n    if category == \"AI Governance\":\n        return \"Focus on developing structured AI governance policies and clearer accountability frameworks.\"\n    elif category == \"AI Data\":\n        return \"Improve data quality, accessibility, and implement better data governance practices.\"\n    elif category == \"AI Infrastructure\":\n        return \"Invest in more robust AI infrastructure and MLOps capabilities to support AI initiatives.\"",
+        "detail": "helper_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_recommendations",
+        "kind": 2,
+        "importPath": "helper_functions",
+        "description": "helper_functions",
+        "peekOfCode": "def get_recommendations(category, score):\n    \"\"\"\n    Return a list of customized recommendations based on the category and score\n    \"\"\"\n    recommendations = []\n    if category == \"AI Governance\":\n        recommendations = [\n            \"Establish clear policies for ethical AI development and usage\",\n            \"Create explicit roles for algorithmic accountability and oversight\",\n            \"Develop a comprehensive AI risk management framework\",",
+        "detail": "helper_functions",
         "documentation": {}
     },
     {
@@ -885,6 +1046,42 @@
         "description": "talen-scoring-with-qlearning-questionnaire",
         "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Talent Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
         "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "create_radar_chart",
+        "kind": 2,
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "peekOfCode": "def create_radar_chart(categories, values):\n    \"\"\"\n    Create a radar chart for displaying category scores\n    \"\"\"\n    # Convert values to numpy array\n    values = np.array(values)\n    # Number of variables\n    N = len(categories)\n    # What will be the angle of each axis in the plot\n    angles = np.linspace(0, 2*np.pi, N, endpoint=False).tolist()",
+        "detail": "visualization_functions",
+        "documentation": {}
+    },
+    {
+        "label": "create_gauge_chart",
+        "kind": 2,
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "peekOfCode": "def create_gauge_chart(score):\n    \"\"\"\n    Create a gauge chart for displaying the overall score\n    \"\"\"\n    # Start and end angle for the gauge\n    start_angle = np.pi/2 + np.pi/4\n    end_angle = np.pi/2 - np.pi/4\n    # Create figure and axis\n    fig, ax = plt.subplots(figsize=(6, 4), subplot_kw=dict(polar=True))\n    # Define ranges for different color segments",
+        "detail": "visualization_functions",
+        "documentation": {}
+    },
+    {
+        "label": "create_bar_chart",
+        "kind": 2,
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "peekOfCode": "def create_bar_chart(categories, values):\n    \"\"\"\n    Create a bar chart for displaying category scores\n    \"\"\"\n    # Create figure\n    fig, ax = plt.subplots(figsize=(10, 6))\n    # Format categories for display (remove 'AI ' prefix if present)\n    display_categories = [cat.replace('AI ', '') if 'AI ' in cat else cat for cat in categories]\n    # Create horizontal bar chart with colors based on values\n    colors = [theme_colors[\"primary\"] if v >= 60 else theme_colors[\"warning\"] if v >= 30 else theme_colors[\"error\"] for v in values]",
+        "detail": "visualization_functions",
+        "documentation": {}
+    },
+    {
+        "label": "theme_colors",
+        "kind": 5,
+        "importPath": "visualization_functions",
+        "description": "visualization_functions",
+        "peekOfCode": "theme_colors = {\n    \"primary\": \"#0284C7\",\n    \"secondary\": \"#38BDF8\",\n    \"success\": \"#10B981\",\n    \"warning\": \"#F59E0B\",\n    \"error\": \"#EF4444\",\n    \"text\": \"#1E293B\",\n    \"background\": \"#F1F5F9\"\n}\ndef create_radar_chart(categories, values):",
+        "detail": "visualization_functions",
         "documentation": {}
     }
 ]
