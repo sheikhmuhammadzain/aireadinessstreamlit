@@ -1,0 +1,890 @@
+[
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "streamlit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "streamlit",
+        "description": "streamlit",
+        "detail": "streamlit",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "plotly.express",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "plotly.express",
+        "description": "plotly.express",
+        "detail": "plotly.express",
+        "documentation": {}
+    },
+    {
+        "label": "plotly.graph_objects",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "plotly.graph_objects",
+        "description": "plotly.graph_objects",
+        "detail": "plotly.graph_objects",
+        "documentation": {}
+    },
+    {
+        "label": "matplotlib.pyplot",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "matplotlib.pyplot",
+        "description": "matplotlib.pyplot",
+        "detail": "matplotlib.pyplot",
+        "documentation": {}
+    },
+    {
+        "label": "matplotlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "matplotlib",
+        "description": "matplotlib",
+        "detail": "matplotlib",
+        "documentation": {}
+    },
+    {
+        "label": "LinearSegmentedColormap",
+        "importPath": "matplotlib.colors",
+        "description": "matplotlib.colors",
+        "isExtraImport": true,
+        "detail": "matplotlib.colors",
+        "documentation": {}
+    },
+    {
+        "label": "seaborn",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "seaborn",
+        "description": "seaborn",
+        "detail": "seaborn",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "importlib.util",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "importlib.util",
+        "description": "importlib.util",
+        "detail": "importlib.util",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "base64",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "base64",
+        "description": "base64",
+        "detail": "base64",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "questionnaire = {\n    \"AI Roles & Responsibilities\": [\n        \"Do you have policies for ethical AI development?\",\n        \"Are all stakeholders educated on AI governance policies?\",\n        \"Do you have regular AI governance board meetings?\",\n        \"Is algorithmic accountability explicitly assigned?\",\n    ],\n    \"Regulatory Compliance\": [\n        \"Does your AI system comply with GDPR, EU AI Act, ISO 42001, or other laws?\",\n        \"Are your AI policies updated with changing regulations?\",",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "user_responses",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "user_responses = {category: [] for category in questionnaire.keys()}\n# ✅ Asking Questions\nfor category, questions in questionnaire.items():\n    print(f\"\\n🔹 **Category: {category}**\")\n    for question in questions:\n        while True:\n            try:\n                response = int(\n                    input(f\"{question}\\nEnter your response (1-4, where 1 = Strongly Disagree, 4 = Strongly Agree): \"))\n                if response < 1 or response > 4:",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "category_scores",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "category_scores = {category: np.mean(scores) for category, scores in user_responses.items()}\n# ✅ Initialize Q-values (Reinforcement Learning)\nq_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "q_values",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "q_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "alpha",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "alpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "gamma",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "gamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "reward",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "reward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "eta",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "eta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Governance Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "exp_q_values",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "exp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Governance Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "softmax_weights",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "softmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Governance Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "overall_score",
+        "kind": 5,
+        "importPath": "ai-governance-scoring-with-qlearning-questionnaire",
+        "description": "ai-governance-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Governance Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
+        "detail": "ai-governance-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "matplotlib_to_image",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def matplotlib_to_image(fig):\n    buf = BytesIO()\n    fig.savefig(buf, format=\"png\", dpi=300, bbox_inches='tight', transparent=True)\n    buf.seek(0)\n    img_str = base64.b64encode(buf.read()).decode()\n    return f\"data:image/png;base64,{img_str}\"\n# Function to create a premium-looking radar chart with matplotlib\ndef create_radar_chart(categories, values, title):\n    # Convert values to 0-100 scale\n    values_100 = [v * 100 / 4 for v in values]",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_radar_chart",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_radar_chart(categories, values, title):\n    # Convert values to 0-100 scale\n    values_100 = [v * 100 / 4 for v in values]\n    # Number of categories\n    N = len(categories)\n    # Create angles for each category (in radians)\n    angles = [n / float(N) * 2 * np.pi for n in range(N)]\n    angles += angles[:1]  # Close the loop\n    # Values also need to close the loop\n    values_100_closed = values_100 + values_100[:1]",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_category_bar_chart",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_category_bar_chart(categories, scores, title):\n    # Set seaborn style\n    sns.set_style(\"whitegrid\")\n    # Create a color gradient\n    colors = sns.color_palette(\"Blues_r\", len(categories))\n    # Create figure\n    fig, ax = plt.subplots(figsize=(10, 6), facecolor='white')\n    # Create horizontal bar chart\n    bars = ax.barh(categories, [score * 100 / 4 for score in scores], color=colors, height=0.6)\n    # Add data labels",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_qvalue_weight_heatmap",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_qvalue_weight_heatmap(categories, q_values, weights, title):\n    # Prepare data for heatmap\n    data = []\n    for category, q_val, weight in zip(categories, q_values, weights):\n        data.append({\n            'Category': category,\n            'Q-Value': q_val,\n            'Weight (%)': weight * 100\n        })\n    df = pd.DataFrame(data)",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "create_gauge_chart",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def create_gauge_chart(score, title):\n    # Configure the figure\n    fig = plt.figure(figsize=(10, 6), facecolor='white')\n    ax = fig.add_subplot(111)\n    # Hide axes\n    ax.set_axis_off()\n    # Set score (0-100 scale)\n    score_100 = score * 100 / 4\n    # Define gauge colors and ranges\n    cmap = LinearSegmentedColormap.from_list('gauge_colors', ['#FF5252', '#FFAB40', '#FFEE58', '#66BB6A'])",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "extract_questionnaire_data",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def extract_questionnaire_data(file_path):\n    # Initial questionnaire structure\n    questionnaire = {}\n    try:\n        # Try with utf-8 encoding first\n        with open(file_path, 'r', encoding='utf-8') as file:\n            content = file.read()\n    except UnicodeDecodeError:\n        # Fall back to latin-1 if utf-8 fails\n        with open(file_path, 'r', encoding='latin-1') as file:",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "load_all_questionnaires",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def load_all_questionnaires():\n    all_questionnaires = {}\n    for category, file_name in questionnaire_files.items():\n        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)\n        questionnaire = extract_questionnaire_data(file_path)\n        if questionnaire:\n            all_questionnaires[category] = questionnaire\n    # If no questionnaires were loaded, use fallback\n    if not all_questionnaires:\n        st.warning(\"Could not load questionnaires from files. Using embedded questionnaires.\")",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_scores",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def calculate_scores(responses):\n    category_scores = {}\n    q_values = {}\n    softmax_weights = {}\n    overall_scores = {}\n    # For each assessment category (Governance, Culture, etc.)\n    for assessment_category, assessment_data in responses.items():\n        # Initialize category scores for this assessment\n        category_scores[assessment_category] = {}\n        # Calculate mean score for each question category",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def main():\n    # Setup session state for storing responses if not already present\n    if 'responses' not in st.session_state:\n        st.session_state.responses = {}\n    if 'assessment_started' not in st.session_state:\n        st.session_state.assessment_started = False\n    if 'show_results' not in st.session_state:\n        st.session_state.show_results = False\n    # Initialize navigation if not already set\n    if 'nav' not in st.session_state:",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "show_home_page",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def show_home_page():\n    # Hero section with cards\n    st.markdown(\"\"\"\n    <div class=\"card\" style=\"padding: 2rem; text-align: center; margin-bottom: 2rem; background: linear-gradient(135deg, #3949AB 0%, #5C6BC0 100%); color: white;\">\n        <h2 style=\"color: white; font-size: 1.8rem; margin-bottom: 1rem;\">Comprehensive AI Readiness Assessment</h2>\n        <p style=\"font-size: 1.1rem; margin-bottom: 1.5rem;\">\n            This enterprise-grade assessment tool helps organizations evaluate their AI readiness \n            across six critical dimensions using a sophisticated Q-Learning algorithm.\n        </p>\n        <div style=\"margin-top: 1.5rem;\">",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "show_about_page",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def show_about_page():\n    st.markdown(\"\"\"\n    <div class=\"card\">\n        <h2 style=\"color: #3949AB;\">About the AI Readiness Assessment Tool</h2>\n        <p>\n            This enterprise-grade assessment tool helps organizations evaluate their AI readiness \n            across six critical dimensions using a sophisticated Q-Learning algorithm.\n        </p>\n        <h3 style=\"color: #3949AB; margin-top: 1.5rem;\">Methodology</h3>\n        <p>",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "show_questionnaire",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def show_questionnaire(all_questionnaires):\n    st.header(\"AI Readiness Questionnaire\")\n    # Check if we have any questionnaires to display\n    if not all_questionnaires:\n        st.warning(\"No questionnaires were loaded successfully. Please check your installation.\")\n        return\n    # Define the answer options with descriptions\n    answer_options = [\n        \"Not Implemented - No evidence of implementation\",\n        \"Initial - Limited or ad-hoc implementation\",",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "show_results",
+        "kind": 2,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "def show_results():\n    st.header(\"AI Readiness Assessment Results\")\n    # Calculate scores\n    category_scores, q_values, softmax_weights, overall_scores = calculate_scores(st.session_state.responses)\n    st.markdown(\"\"\"\n    <div class=\"card\">\n        <h2>Executive Summary</h2>\n        <p>This dashboard presents your organization's AI readiness assessment results across multiple dimensions.\n        The scores are calculated using a Q-learning algorithm that weights different aspects of AI readiness.</p>\n    </div>",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "theme_colors",
+        "kind": 5,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "theme_colors = {\n    \"primary\": \"#3949AB\",    # Deep blue\n    \"secondary\": \"#00ACC1\",  # Cyan\n    \"background\": \"#FAFAFA\", # Light grey\n    \"success\": \"#4CAF50\",    # Green\n    \"warning\": \"#FF9800\",    # Orange\n    \"error\": \"#F44336\",      # Red\n    \"text\": \"#212121\",       # Dark grey\n    \"accent1\": \"#7E57C2\",    # Purple\n    \"accent2\": \"#26A69A\",    # Teal",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire_files",
+        "kind": 5,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "questionnaire_files = {\n    \"AI Governance\": \"ai-governance-scoring-with-qlearning-questionnaire.py\",\n    \"AI Culture\": \"culture-scoring-with-qlearning-questionnaire.py\",\n    \"AI Data\": \"data-scoring-with-qlearning-questionnaire.py\",\n    \"AI Infrastructure\": \"infra-scoring-with-qlearning-questionnaire.py\",\n    \"AI Strategy\": \"strategy-scoring-with-qlearning-questionnaire.py\",\n    \"AI Talent\": \"talen-scoring-with-qlearning-questionnaire.py\"\n}\n# Fallback questionnaires in case file parsing fails\nfallback_questionnaires = {",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "fallback_questionnaires",
+        "kind": 5,
+        "importPath": "ai_readiness_assessment_app",
+        "description": "ai_readiness_assessment_app",
+        "peekOfCode": "fallback_questionnaires = {\n    \"AI Governance\": {\n        \"AI Roles & Responsibilities\": [\n            \"Do you have policies for ethical AI development?\",\n            \"Are all stakeholders educated on AI governance policies?\",\n            \"Do you have regular AI governance board meetings?\",\n            \"Is algorithmic accountability explicitly assigned?\"\n        ],\n        \"Regulatory Compliance\": [\n            \"Does your AI system comply with GDPR, EU AI Act, ISO 42001, or other laws?\",",
+        "detail": "ai_readiness_assessment_app",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "questionnaire = {\n    \"AI Leadership & Vision\": [\n        \"Does the organization have a clear AI strategy?\",\n        \"Is there an AI champions program in your organization?\",\n        \"Do you integrate AI into day-to-day organizational workflows?\"\n    ],\n    \"AI Experimentation & Innovation\": [\n        \"Are AI pilots and innovation hubs encouraged?\",\n        \"Do you celebrate AI project milestones publicly?\",\n        \"Do you have a platform for sharing AI-related innovations?\",",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "user_responses",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "user_responses = {category: [] for category in questionnaire.keys()}\n# ✅ Asking Questions\nfor category, questions in questionnaire.items():\n    print(f\"\\n🔹 **Category: {category}**\")\n    for question in questions:\n        while True:\n            try:\n                response = int(\n                    input(f\"{question}\\nEnter your response (1-4, where 1 = Strongly Disagree, 4 = Strongly Agree): \"))\n                if response < 1 or response > 4:",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "category_scores",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "category_scores = {category: np.mean(scores) for category, scores in user_responses.items()}\n# ✅ Initialize Q-values (Reinforcement Learning)\nq_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "q_values",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "q_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "alpha",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "alpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "gamma",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "gamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "reward",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "reward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "eta",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "eta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Culture Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "exp_q_values",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "exp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Culture Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "softmax_weights",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "softmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Culture Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "overall_score",
+        "kind": 5,
+        "importPath": "culture-scoring-with-qlearning-questionnaire",
+        "description": "culture-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Culture Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
+        "detail": "culture-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "questionnaire = {\n    \"Data Accessibility & Cataloging\": [\n        \"Is your data catalogued for easy access by AI teams?\",\n        \"Do you maintain data dictionaries to standardize metadata?\",\n        \"How frequent is your data updated for AI use cases?\",\n        \"Do you support multi-modal data integration for AI?\",\n    ],\n    \"Data Governance & Compliance\": [\n        \"Is your data governance aligned with AI requirements?\",\n        \"How secure is your external data ingestion process?\",",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "user_responses",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "user_responses = {category: [] for category in questionnaire.keys()}\n# ✅ Asking Questions\nfor category, questions in questionnaire.items():\n    print(f\"\\n🔹 **Category: {category}**\")\n    for question in questions:\n        while True:\n            try:\n                response = int(\n                    input(f\"{question}\\nEnter your response (1-4, where 1 = Strongly Disagree, 4 = Strongly Agree): \"))\n                if response < 1 or response > 4:",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "category_scores",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "category_scores = {category: np.mean(scores) for category, scores in user_responses.items()}\n# ✅ Initialize Q-values (Reinforcement Learning)\nq_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "q_values",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "q_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "alpha",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "alpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "gamma",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "gamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "reward",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "reward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "eta",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "eta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Data Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "exp_q_values",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "exp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Data Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "softmax_weights",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "softmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Data Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "overall_score",
+        "kind": 5,
+        "importPath": "data-scoring-with-qlearning-questionnaire",
+        "description": "data-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Data Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
+        "detail": "data-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "questionnaire = {\n    \"Compute Resources\": [\n        \"Do you have the necessary GPUs/TPUs for AI workloads?\",\n        \"Are your compute resources sufficient for AI training tasks?\",\n        \"Do you have redundancy systems for AI computing needs?\",\n        \"How aligned are your hardware upgrades with AI goals?\",\n        \"Do you have a separate budget for scaling AI infrastructure?\"\n    ],\n    \"Storage & Data Access\": [\n        \"Is your data storage optimized for AI scalability?\",",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "user_responses",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "user_responses = {category: [] for category in questionnaire.keys()}\n# ✅ Asking Questions\nfor category, questions in questionnaire.items():\n    print(f\"\\n🔹 **Category: {category}**\")\n    for question in questions:\n        while True:\n            try:\n                response = int(\n                    input(f\"{question}\\nEnter your response (1-4, where 1 = Strongly Disagree, 4 = Strongly Agree): \"))\n                if response < 1 or response > 4:",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "category_scores",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "category_scores = {category: np.mean(scores) for category, scores in user_responses.items()}\n# ✅ Initialize Q-values (Reinforcement Learning)\nq_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "q_values",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "q_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "alpha",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "alpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "gamma",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "gamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "reward",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "reward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "eta",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "eta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Infrastructure Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "exp_q_values",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "exp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Infrastructure Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "softmax_weights",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "softmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Infrastructure Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "overall_score",
+        "kind": 5,
+        "importPath": "infra-scoring-with-qlearning-questionnaire",
+        "description": "infra-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Infrastructure Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
+        "detail": "infra-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "questionnaire = {\n    \"Data Security & Encryption\": [\n        \"Is training and inference data encrypted and secured?\",\n        \"How robust are your organization's data encryption and protection mechanisms for AI deployments?\",\n        \"Does your organization conduct regular security audits for AI systems?\",\n        \"How does your organization ensure compliance with regulations regarding AI security?\"\n    ],\n    \"Model Access Control\": [\n        \"Do you employ explainable AI techniques to enhance transparency?\",\n        \"Are access controls for AI systems well-defined and enforced?\",",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "user_responses",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "user_responses = {category: [] for category in questionnaire.keys()}\n# ✅ Asking Questions\nfor category, questions in questionnaire.items():\n    print(f\"\\n🔹 **Category: {category}**\")\n    for question in questions:\n        while True:\n            try:\n                response = int(\n                    input(f\"{question}\\nEnter your response (1-4, where 1 = Strongly Disagree, 4 = Strongly Agree): \"))\n                if response < 1 or response > 4:",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "category_scores",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "category_scores = {category: np.mean(scores) for category, scores in user_responses.items()}\n# ✅ Initialize Q-values (Reinforcement Learning)\nq_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "q_values",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "q_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "alpha",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "alpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "gamma",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "gamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "reward",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "reward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "eta",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "eta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Strategy Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "exp_q_values",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "exp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Strategy Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "softmax_weights",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "softmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Strategy Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "overall_score",
+        "kind": 5,
+        "importPath": "strategy-scoring-with-qlearning-questionnaire",
+        "description": "strategy-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Strategy Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
+        "detail": "strategy-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "questionnaire",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "questionnaire = {\n    \"AI Talent Acquisition\": [\n        \"Do you have a structured AI hiring strategy?\",\n        \"Are your hiring policies tailored for AI-specific skills?\",\n        \"Do you recruit globally for AI talent?\",\n        \"Are your job roles for AI well-defined?\",\n    ],\n    \"AI Upskilling & Training\": [\n        \"Are employees receiving AI training and certifications?\",\n        \"Do you conduct regular AI capability assessments for your staff?\",",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "user_responses",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "user_responses = {category: [] for category in questionnaire.keys()}\n# ✅ Asking Questions\nfor category, questions in questionnaire.items():\n    print(f\"\\n🔹 **Category: {category}**\")\n    for question in questions:\n        while True:\n            try:\n                response = int(\n                    input(f\"{question}\\nEnter your response (1-4, where 1 = Strongly Disagree, 4 = Strongly Agree): \"))\n                if response < 1 or response > 4:",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "category_scores",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "category_scores = {category: np.mean(scores) for category, scores in user_responses.items()}\n# ✅ Initialize Q-values (Reinforcement Learning)\nq_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "q_values",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "q_values = {category: np.random.uniform(0, 1) for category in questionnaire.keys()}\n# ✅ Reinforcement Learning Parameters\nalpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "alpha",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "alpha = 0.1  # Learning rate\ngamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "gamma",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "gamma = 0.9  # Discount factor\nreward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "reward",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "reward = 1  # Assume a reward of 1 for simplicity\n# ✅ Updating Q-values iteratively based on reinforcement learning\nfor _ in range(10):  # Simulate multiple learning iterations\n    for category in questionnaire.keys():\n        q_values[category] = q_values[category] + alpha * (reward + gamma * max(q_values.values()) - q_values[category])\n# ✅ Compute Softmax Weights **AFTER UPDATING Q-values**\neta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "eta",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "eta = 1.0  # Softmax scaling parameter\nexp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Talent Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "exp_q_values",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "exp_q_values = np.exp(eta * np.array(list(q_values.values())))\nsoftmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Talent Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "softmax_weights",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "softmax_weights = exp_q_values / np.sum(exp_q_values)\n# ✅ Compute Final AI Data Readiness Score (Weighted Sum)\noverall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Talent Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    },
+    {
+        "label": "overall_score",
+        "kind": 5,
+        "importPath": "talen-scoring-with-qlearning-questionnaire",
+        "description": "talen-scoring-with-qlearning-questionnaire",
+        "peekOfCode": "overall_score = sum(category_scores[cat] * softmax_weights[i] for i, cat in enumerate(questionnaire.keys()))\n# ✅ Display Results\nprint(\"\\n🏆 **AI Talent Readiness Scores:**\")\nfor category in questionnaire.keys():\n    print(f\"{category}: {category_scores[category]:.2f}\")\n# ✅ Display Updated Q-values\nprint(\"\\n🔹 **Updated Q-values after Learning:**\")\nfor category, q_val in q_values.items():\n    print(f\"{category}: {q_val:.3f}\")\n# ✅ Display Softmax Weights",
+        "detail": "talen-scoring-with-qlearning-questionnaire",
+        "documentation": {}
+    }
+]
